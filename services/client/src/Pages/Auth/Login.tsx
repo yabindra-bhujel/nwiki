@@ -1,6 +1,8 @@
 import React from "react";
-import { FcGoogle } from "react-icons/fc";
-
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import instance from "../../config/instance";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
@@ -8,6 +10,7 @@ const Login = () => {
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -22,6 +25,18 @@ const Login = () => {
     setError("");
     setLoading(true);
   };
+
+
+  const saveGoogleUserData = async(credentialResponse: any) => {
+    const response = await instance.post("user/google-auth", {
+     credentialResponse,
+    });
+
+    if (response.status === 201) {
+     navigate("/");
+    }
+  };
+
 
   return (
     <div className="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen py-6 px-4">
@@ -102,16 +117,21 @@ const Login = () => {
         </div>
 
         <div className="text-center">
-            <button className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:border-blue-500 flex items-center justify-center">
-
-            <FcGoogle className="mr-2" />
-            Login with Google
-          </button>
+          <GoogleLogin
+            size="large"
+            width={400}
+            onSuccess={(credentialResponse) => {
+              saveGoogleUserData(credentialResponse);
+            }}
+            onError={() => {
+            }}
+            auto_select={true}
+          />
         </div>
       </div>
       <div className="absolute right-0 bottom-0 px-4 py-2 text-sm text-gray-700">
-          &copy; {currentYear} My Company. All rights reserved.
-        </div>
+        &copy; {currentYear} My Company. All rights reserved.
+      </div>
     </div>
   );
 };

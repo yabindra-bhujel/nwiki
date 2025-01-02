@@ -1,16 +1,19 @@
 #!/bin/bash
 
-# Start the server
 
+echo "Starting the database server"
+docker-compose up -d
+
+echo "Starting the API server"
 
 
 cd services/api
 
 npm install
 
-npm run start &
+nest start --watch &
 
-cd services/client
+cd ../client
 
 npm install
 

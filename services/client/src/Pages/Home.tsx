@@ -1,5 +1,43 @@
 import React from "react";
 import { Navigation } from "./Navigation";
+import instance from "../config/instance";
+
+
+const UserInfoComponent = () => {
+  const [user, setUser] = React.useState<any>({});
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await instance.get("user/me",
+        {
+          withCredentials: true
+        });
+        setUser(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  return (
+    <div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <h2 className="text-2xl font-semibold">{user.name}</h2>
+          <p className="text-gray-500">{user.email}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type ContentRanking = {
   title: string;
@@ -145,7 +183,7 @@ export const Home = () => {
 
           {/* Center */}
           <div className="w-full lg:max-w-[800px] px-4 sm:px-6 lg:px-8 bg-white">
-            center
+            <UserInfoComponent />
           </div>
 
           {/* Right */}
