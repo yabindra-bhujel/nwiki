@@ -48,8 +48,18 @@ export class UserService {
 }
 
   async me(token: string): Promise<any> {
-    const decodedPayload = this.jwtService.decode(token);
-    return decodedPayload
+    const email = this.jwtService.decode(token).email;
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    delete user.password;
+    delete user.authProvider
+    delete user.isActive
+    delete user.isVerified
+    delete user.createdAt
+    delete user.lastLogin
+    return user;
   }
 
   async generateJwtToken(user: User): Promise<string> {
