@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UnauthorizedException, UseGuards, HttpStatus, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateGoogleAuthInputDto } from './dto/create-google-auth.dto';
@@ -33,6 +33,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');

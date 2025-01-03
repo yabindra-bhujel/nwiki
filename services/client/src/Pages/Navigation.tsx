@@ -4,6 +4,7 @@ import { Footer } from "../component/navigration/Footer";
 import { useUser } from "../hooks/useUsers";
 import { useNavigate } from "react-router-dom";
 import { StatusActions } from "../features/userSlice";
+import instance from "../config/instance";
 
 interface NavigationProps {
   children: ReactNode;
@@ -17,6 +18,12 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   if (status === StatusActions.failed) {
     navigate("/login");
     return null;
+  }
+
+
+  const logout = async () => {
+     await instance.post("/user/logout");
+      navigate("/login");
   }
 
   return (
@@ -45,9 +52,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                     Create Post
                   </button>
                   <button
-                    onClick={() => {
-                      navigate("/login");
-                    }}
+                    onClick={logout}
                     className="text-red-500"
                   >
                     Logout
